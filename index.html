@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SereneMind - บันทึกอารมณ์และโอบกอดตัวเอง (Warm Earth Tone)</title>
+  
+  <!-- Google Fonts: Mitr & Prompt for soothing Thai typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&family=Prompt:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Tailwind Configuration for Warm Earth Tone Palette -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            mitr: ['Mitr', 'sans-serif'],
+            prompt: ['Prompt', 'sans-serif'],
+          },
+          colors: {
+            earth: {
+              50: '#FBF9F5',
+              100: '#F4EFEB',
+              200: '#E8DFD5',
+              300: '#D7CAB8',
+              400: '#BDB09B',
+              500: '#9C8E79',
+              600: '#7E6F5B',
+              700: '#645645',
+              800: '#4D4133',
+              900: '#382F24',
+            },
+            sage: {
+              50: '#F5F7F3',
+              100: '#E8ECE3',
+              200: '#D2DACB',
+              300: '#B4C2AA',
+              400: '#8E9E82',
+              500: '#6E8162',
+              600: '#55654B',
+              700: '#3F4D37',
+              800: '#2E3827',
+            },
+            terracotta: {
+              50: '#FDF8F5',
+              100: '#FAEDE7',
+              200: '#F3D7CA',
+              300: '#E6B7A1',
+              400: '#D49072',
+              500: '#BD6D4B',
+              600: '#9E5233',
+              700: '#7B3D23',
+            },
+            warmamber: {
+              50: '#FDFBF4',
+              100: '#FAF4E4',
+              200: '#F3E5C3',
+              300: '#E8D099',
+              400: '#D7B66B',
+              500: '#C29841',
+              600: '#9E782D',
+            }
+          },
+          animation: {
+            'breathe-in-out': 'breathe 19s ease-in-out infinite',
+            'float': 'floating 4s ease-in-out infinite',
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          },
+          keyframes: {
+            breathe: {
+              '0%, 100%': { transform: 'scale(1)', opacity: '0.6' },
+              '21%': { transform: 'scale(1.45)', opacity: '0.95' }, /* Inhale 4s */
+              '58%': { transform: 'scale(1.45)', opacity: '0.95' }, /* Hold 7s */
+              '100%': { transform: 'scale(1)', opacity: '0.6' },    /* Exhale 8s */
+            },
+            floating: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-8px)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Prompt', sans-serif;
+      background: linear-gradient(135deg, #FBF9F5 0%, #F5EFEB 50%, #ECE5DB 100%);
+      min-height: 100vh;
+      color: #3D352E;
+      overflow-x: hidden;
+    }
+    
+    .font-heading {
+      font-family: 'Mitr', sans-serif;
+    }
+
+    /* Cozy Warm Earth Glassmorphism */
+    .glass-card {
+      background: rgba(254, 252, 248, 0.85);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(232, 225, 213, 0.85);
+      box-shadow: 0 10px 30px -10px rgba(100, 86, 69, 0.07);
+    }
+
+    .glass-card-hover {
+      transition: all 0.3s ease;
+    }
+    .glass-card-hover:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 36px -12px rgba(100, 86, 69, 0.14);
+    }
+
+    /* Range slider custom styling in warm terracotta */
+    input[type=range] {
+      accent-color: #BD6D4B;
+    }
+
+    /* Vent dissolve animation */
+    .dissolving {
+      transition: all 2.2s cubic-bezier(0.25, 1, 0.5, 1);
+      filter: blur(12px);
+      opacity: 0;
+      transform: scale(0.92) translateY(-25px);
+      pointer-events: none;
+    }
+
+    /* Canvas particle overlay */
+    #particles-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 30;
+    }
+
+    /* Custom Earthy scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(244, 239, 235, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D7CAB8;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #BDB09B;
+    }
+  </style>
+</head>
+<body class="selection:bg-terracotta-200 selection:text-terracotta-900 pb-20 md:pb-12">
+
+  <!-- Background decorative light orbs (Earth, Warm Sand & Soft Sage) -->
+  <div class="fixed top-[-80px] left-[-80px] w-96 h-96 rounded-full bg-gradient-to-br from-terracotta-200/40 to-earth-200/50 blur-3xl -z-10 pointer-events-none"></div>
+  <div class="fixed bottom-[-60px] right-[-60px] w-96 h-96 rounded-full bg-gradient-to-tl from-sage-200/40 to-warmamber-200/40 blur-3xl -z-10 pointer-events-none"></div>
+
+  <!-- Header Navigation -->
+  <header class="sticky top-0 z-40 bg-earth-50/80 backdrop-blur-md border-b border-earth-200/70 transition-all">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center space-x-2.5 cursor-pointer" onclick="switchTab('checkin')">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-earth-600 via-terracotta-500 to-sage-500 flex items-center justify-center text-white shadow-md shadow-earth-300/40">
+          <i data-lucide="sparkles" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <span class="font-heading font-medium text-xl text-earth-900 tracking-tight flex items-center gap-1.5">
+            SereneMind
+            <span class="text-[10px] uppercase font-semibold px-2 py-0.5 bg-earth-100 text-earth-700 rounded-full border border-earth-200">Earth Tone</span>
+          </span>
+          <p class="text-xs text-earth-500 hidden sm:block">พื้นที่ปลอดภัยสำหรับอารมณ์ของคุณ</p>
+        </div>
+      </div>
+
+      <!-- Quick Ambient Sound & Breathing Control -->
+      <div class="flex items-center space-x-2">
+        <div class="relative">
+          <button id="ambient-btn" onclick="toggleAmbientMenu()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-earth-100 hover:bg-earth-200/80 text-earth-700 rounded-full border border-earth-200 transition shadow-sm">
+            <i id="ambient-icon" data-lucide="volume-2" class="w-3.5 h-3.5 text-earth-600"></i>
+            <span id="ambient-label" class="hidden sm:inline">เสียงผ่อนคลาย</span>
+          </button>
+
+          <!-- Ambient Sounds Dropdown -->
+          <div id="ambient-dropdown" class="hidden absolute right-0 mt-2 w-64 glass-card rounded-2xl p-3 shadow-xl z-50 border border-earth-200">
+            <div class="flex items-center justify-between pb-2 mb-2 border-b border-earth-200">
+              <span class="text-xs font-heading font-medium text-earth-800">เสียงธรรมชาติคลายใจ</span>
+              <button onclick="stopAmbientSound()" class="text-[11px] text-terracotta-600 hover:text-terracotta-700 font-medium">ปิดเสียง</button>
+            </div>
+            <div class="space-y-1.5">
+              <button onclick="playAmbientSound('rain')" class="ambient-opt w-full flex items-center justify-between p-2 rounded-xl text-xs hover:bg-earth-100/80 text-earth-800 transition" data-sound="rain">
+                <span class="flex items-center gap-2">🌧️ เสียงสายฝนพรำ</span>
+                <span class="sound-indicator text-xs text-sage-600 font-semibold opacity-0">● เล่นอยู่</span>
+              </button>
+              <button onclick="playAmbientSound('waves')" class="ambient-opt w-full flex items-center justify-between p-2 rounded-xl text-xs hover:bg-earth-100/80 text-earth-800 transition" data-sound="waves">
+                <span class="flex items-center gap-2">🌊 คลื่นทะเลอบอุ่น</span>
+                <span class="sound-indicator text-xs text-sage-600 font-semibold opacity-0">● เล่นอยู่</span>
+              </button>
+              <button onclick="playAmbientSound('fire')" class="ambient-opt w-full flex items-center justify-between p-2 rounded-xl text-xs hover:bg-earth-100/80 text-earth-800 transition" data-sound="fire">
+                <span class="flex items-center gap-2">🪵 เปลวไฟในเตาผิง</span>
+                <span class="sound-indicator text-xs text-sage-600 font-semibold opacity-0">● เล่นอยู่</span>
+              </button>
+              <button onclick="playAmbientSound('zen')" class="ambient-opt w-full flex items-center justify-between p-2 rounded-xl text-xs hover:bg-earth-100/80 text-earth-800 transition" data-sound="zen">
+                <span class="flex items-center gap-2">🔔 ขันทิเบต (Zen Bowl)</span>
+                <span class="sound-indicator text-xs text-sage-600 font-semibold opacity-0">● เล่นอยู่</span>
+              </button>
+            </div>
+            <div class="mt-3 pt-2 border-t border-earth-200 flex items-center gap-2">
+              <i data-lucide="volume-1" class="w-3.5 h-3.5 text-earth-400"></i>
+              <input id="ambient-volume" type="range" min="0" max="1" step="0.05" value="0.3" class="w-full h-1 bg-earth-200 rounded-lg cursor-pointer" oninput="changeAmbientVolume(this.value)">
+            </div>
+          </div>
+        </div>
+
+        <!-- Breathing Pill Button -->
+        <button onclick="switchTab('breathing')" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-terracotta-100/80 hover:bg-terracotta-200/80 text-terracotta-700 rounded-full border border-terracotta-200 transition shadow-sm">
+          <i data-lucide="wind" class="w-3.5 h-3.5"></i>
+          <span class="hidden sm:inline">ฝึกหายใจ 4-7-8</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Navigation Tab Bar (Desktop: Top pill bar, Mobile: Bottom app bar) -->
+  <div class="max-w-5xl mx-auto px-4 mt-4 hidden md:block">
+    <nav class="flex items-center justify-center p-1.5 glass-card rounded-2xl max-w-2xl mx-auto shadow-sm border border-earth-200/80">
+      <button onclick="switchTab('checkin')" id="nav-btn-checkin" class="nav-tab flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-1.5 text-earth-900 bg-white shadow-sm border border-earth-200/60">
+        <i data-lucide="smile" class="w-4 h-4 text-terracotta-600"></i>
+        <span>เช็กอินอารมณ์</span>
+      </button>
+      <button onclick="switchTab('vent')" id="nav-btn-vent" class="nav-tab flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-1.5 text-earth-600 hover:text-earth-900">
+        <i data-lucide="feather" class="w-4 h-4"></i>
+        <span>ระบายความรู้สึก</span>
+      </button>
+      <button onclick="switchTab('prompts')" id="nav-btn-prompts" class="nav-tab flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-1.5 text-earth-600 hover:text-earth-900">
+        <i data-lucide="compass" class="w-4 h-4"></i>
+        <span>สะท้อนคิดตัวเอง</span>
+      </button>
+      <button onclick="switchTab('history')" id="nav-btn-history" class="nav-tab flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-1.5 text-earth-600 hover:text-earth-900">
+        <i data-lucide="calendar" class="w-4 h-4"></i>
+        <span>ประวัติ & สรุป</span>
+      </button>
+      <button onclick="switchTab('breathing')" id="nav-btn-breathing" class="nav-tab flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-1.5 text-earth-600 hover:text-earth-900">
+        <i data-lucide="heart" class="w-4 h-4"></i>
+        <span>พักใจ</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Main Container -->
+  <main class="max-w-4xl mx-auto px-4 py-6">
+
+    <!-- ========================================== -->
+    <!-- TAB 1: DAILY CHECK-IN                      -->
+    <!-- ========================================== -->
+    <section id="tab-checkin" class="tab-pane space-y-6">
+      
+      <!-- Gentle Greeting Banner -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 text-center relative overflow-hidden border border-earth-200">
+        <div class="absolute -right-8 -top-8 w-32 h-32 bg-terracotta-100 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="absolute -left-8 -bottom-8 w-32 h-32 bg-sage-100 rounded-full blur-2xl pointer-events-none"></div>
+        <span class="inline-block text-xs font-semibold px-3 py-1 bg-sage-100 text-sage-800 rounded-full mb-3 border border-sage-200">
+          Daily Heart Check 🌿
+        </span>
+        <h1 class="font-heading text-2xl sm:text-3xl font-semibold text-earth-900 mb-2">
+          วันนี้หัวใจของเธอเป็นอย่างไรบ้าง?
+        </h1>
+        <p class="text-sm text-earth-600 max-w-md mx-auto">
+          ไม่ว่าจะสุข สงบ เหนื่อย หรือสับสน ทุกความรู้สึกล้วนมีความหมายและสมควรได้รับการโอบกอด
+        </p>
+      </div>
+
+      <!-- Check-in Form Card -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-7 shadow-lg border border-earth-200">
+        
+        <!-- Step 1: Select Mood -->
+        <div>
+          <label class="block font-heading font-medium text-earth-900 text-base mb-3 flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-earth-200 text-earth-800 text-xs flex items-center justify-center font-bold">1</span>
+            เลือกอารมณ์ที่ตรงกับความรู้สึกหลักในตอนนี้
+          </label>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="mood-selector-container">
+            
+            <button type="button" onclick="selectMood('happy', 'สดใส ร่าเริง', '☀️', '#D97706', '#FEF3C7')" class="mood-btn p-3.5 rounded-2xl border-2 border-earth-200 bg-white/80 hover:border-warmamber-400 hover:bg-warmamber-50/50 transition-all text-center flex flex-col items-center gap-2 group cursor-pointer" data-mood="happy">
+              <span class="text-3xl group-hover:scale-110 transition-transform">☀️</span>
+              <span class="text-xs sm:text-sm font-medium text-earth-800">สดใส ร่าเริง</span>
+              <span class="text-[11px] text-earth-500">เบิกบาน มีพลัง</span>
+            </button>
+
+            <button type="button" onclick="selectMood('calm', 'สงบ ผ่อนคลาย', '🌿', '#55654B', '#E8ECE3')" class="mood-btn p-3.5 rounded-2xl border-2 border-earth-200 bg-white/80 hover:border-sage-400 hover:bg-sage-50/50 transition-all text-center flex flex-col items-center gap-2 group cursor-pointer" data-mood="calm">
+              <span class="text-3xl group-hover:scale-110 transition-transform">🌿</span>
+              <span class="text-xs sm:text-sm font-medium text-earth-800">สงบ ผ่อนคลาย</span>
+              <span class="text-[11px] text-earth-500">ราบรื่น สบายใจ</span>
+            </button>
+
+            <button type="button" onclick="selectMood('grateful', 'ซาบซึ้ง อบอุ่น', '💖', '#BD6D4B', '#FAEDE7')" class="mood-btn p-3.5 rounded-2xl border-2 border-earth-200 bg-white/80 hover:border-terracotta-400 hover:bg-terracotta-50/50 transition-all text-center flex flex-col items-center gap-2 group cursor-pointer" data-mood="grateful">
+              <span class="text-3xl group-hover:scale-110 transition-transform">💖</span>
+              <span class="text-xs sm:text-sm font-medium text-earth-800">ซาบซึ้ง อบอุ่น</span>
+              <span class="text-[11px] text-earth-500">ขอบคุณ เต็มเปี่ยม</span>
+            </button>
+
+            <button type="button" onclick="selectMood('anxious', 'วิตกกังวล สับสน', '🌧️', '#64748B', '#F1F5F9')" class="mood-btn p-3.5 rounded-2xl border-2 border-earth-200 bg-white/80 hover:border-stone-400 hover:bg-stone-50/50 transition-all text-center flex flex-col items-center gap-2 group cursor-pointer" data-mood="anxious">
+              <span class="text-3xl group-hover:scale-110 transition-transform">🌧️</span>
+              <span class="text-xs sm:text-sm font-medium text-earth-800">วิตกกังวล หน่วงใจ</span>
+              <span class="text-[11px] text-earth-500">คิดมาก กระวนกระวาย</span>
+            </button>
+
+            <button type="button" onclick="selectMood('tired', 'เหนื่อยล้า หมดแรง', '🛋️', '#8C7862', '#F4EFEB')" class="mood-btn p-3.5 rounded-2xl border-2 border-earth-200 bg-white/80 hover:border-earth-400 hover:bg-earth-100/50 transition-all text-center flex flex-col items-center gap-2 group cursor-pointer" data-mood="tired">
+              <span class="text-3xl group-hover:scale-110 transition-transform">🛋️</span>
+              <span class="text-xs sm:text-sm font-medium text-earth-800">เหนื่อยล้า ล้ากาย</span>
+              <span class="text-[11px] text-earth-500">หมดพลัง อยากพัก</span>
+            </button>
+
+            <button type="button" onclick="selectMood('neutral', 'ว่างเปล่า เฉยๆ', '☁️', '#A8A29E', '#F5F5F4')" class="mood-btn p-3.5 rounded-2xl border-2 border-earth-200 bg-white/80 hover:border-earth-300 hover:bg-earth-50/50 transition-all text-center flex flex-col items-center gap-2 group cursor-pointer" data-mood="neutral">
+              <span class="text-3xl group-hover:scale-110 transition-transform">☁️</span>
+              <span class="text-xs sm:text-sm font-medium text-earth-800">ว่างเปล่า ลอยๆ</span>
+              <span class="text-[11px] text-earth-500">ไม่ชัดเจน เรื่อยๆ</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 2: Intensity Slider (1-10) -->
+        <div class="bg-earth-100/70 rounded-2xl p-5 border border-earth-200">
+          <div class="flex items-center justify-between mb-2">
+            <label class="font-heading font-medium text-earth-900 text-sm flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-earth-200 text-earth-800 text-xs flex items-center justify-center font-bold">2</span>
+              ระดับความเข้มข้นของความรู้สึกนี้
+            </label>
+            <span id="intensity-badge" class="px-3 py-1 bg-terracotta-600 text-white text-xs font-bold rounded-full shadow-sm">
+              ระดับ 5 / 10
+            </span>
+          </div>
+
+          <div class="pt-2 px-1">
+            <input id="intensity-slider" type="range" min="1" max="10" value="5" class="w-full h-2.5 bg-earth-300 rounded-lg cursor-pointer" oninput="updateIntensity(this.value)">
+            <div class="flex justify-between text-[11px] text-earth-500 font-medium mt-2 px-1">
+              <span>1: เบาบางมาก</span>
+              <span>5: ปานกลาง</span>
+              <span>10: เข้มข้นล้นใจ</span>
+            </div>
+            <p id="intensity-desc" class="text-xs text-earth-700 mt-2 text-center font-medium bg-white/70 py-1.5 rounded-xl border border-earth-200">
+              "รู้สึกได้พอสมควร อยู่ในระดับที่รับมือได้"
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 3: Life Areas / Tags -->
+        <div>
+          <label class="block font-heading font-medium text-earth-900 text-sm mb-2 flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-earth-200 text-earth-800 text-xs flex items-center justify-center font-bold">3</span>
+            เรื่องราวนี้เกี่ยวข้องกับด้านใดบ้าง? (เลือกได้หลายข้อ)
+          </label>
+          <div class="flex flex-wrap gap-2" id="tag-pills">
+            <button type="button" onclick="toggleTag(this, 'งาน/การเรียน')" class="tag-btn text-xs px-3.5 py-1.5 rounded-full border border-earth-200 bg-white text-earth-700 hover:bg-earth-100 transition">💼 งาน/การเรียน</button>
+            <button type="button" onclick="toggleTag(this, 'ความสัมพันธ์')" class="tag-btn text-xs px-3.5 py-1.5 rounded-full border border-earth-200 bg-white text-earth-700 hover:bg-earth-100 transition">💬 ความสัมพันธ์</button>
+            <button type="button" onclick="toggleTag(this, 'ครอบครัว')" class="tag-btn text-xs px-3.5 py-1.5 rounded-full border border-earth-200 bg-white text-earth-700 hover:bg-earth-100 transition">🏡 ครอบครัว</button>
+            <button type="button" onclick="toggleTag(this, 'สุขภาพ/การนอน')" class="tag-btn text-xs px-3.5 py-1.5 rounded-full border border-earth-200 bg-white text-earth-700 hover:bg-earth-100 transition">🛌 สุขภาพ/การนอน</button>
+            <button type="button" onclick="toggleTag(this, 'เรื่องเงิน')" class="tag-btn text-xs px-3.5 py-1.5 rounded-full border border-earth-200 bg-white text-earth-700 hover:bg-earth-100 transition">🪙 เรื่องเงิน</button>
+            <button type="button" onclick="toggleTag(this, 'ตัวเอง')" class="tag-btn text-xs px-3.5 py-1.5 rounded-full border border-earth-200 bg-white text-earth-700 hover:bg-earth-100 transition">🌱 ตัวเอง/การเติบโต</button>
+            <button type="button" onclick="toggleTag(this, 'พักผ่อน/งานอดิเรก')" class="tag-btn text-xs px-3.5 py-1.5 rounded-full border border-earth-200 bg-white text-earth-700 hover:bg-earth-100 transition">☕ พักผ่อน/งานอดิเรก</button>
+          </div>
+        </div>
+
+        <!-- Step 4: Short Note -->
+        <div>
+          <label for="checkin-note" class="block font-heading font-medium text-earth-900 text-sm mb-2 flex items-center justify-between">
+            <span class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-earth-200 text-earth-800 text-xs flex items-center justify-center font-bold">4</span>
+              วันนี้เกิดอะไรขึ้นบ้าง หรือมีความรู้สึกอะไรติดค้างในใจ?
+            </span>
+            <span class="text-xs text-earth-400 font-normal">บันทึกสั้นๆ</span>
+          </label>
+          <textarea id="checkin-note" rows="3" class="w-full p-4 rounded-2xl border border-earth-200 bg-white/90 focus:ring-2 focus:ring-terracotta-300 focus:outline-none text-sm text-earth-800 placeholder-earth-400 transition" placeholder="พิมพ์สิ่งเล็กๆ ที่พบเจอ หรือคำที่อยากบอกตัวเองในวันนี้..."></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="pt-2">
+          <button type="button" onclick="saveCheckin()" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-earth-700 via-terracotta-600 to-sage-600 hover:from-earth-800 hover:to-sage-700 text-white font-heading font-medium text-base shadow-lg shadow-earth-300/40 hover:shadow-xl transition-all transform active:scale-[0.99] flex items-center justify-center gap-2">
+            <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+            บันทึกการเช็กอินวันนี้
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Encouraging Thought of the Day -->
+      <div class="text-center p-4">
+        <p class="text-xs text-earth-600 italic" id="daily-quote">
+          "เธอไม่จำเป็นต้องสมบูรณ์แบบในทุกวัน แค่พาตัวเองผ่านวันนี้มาได้ ก็น่ายกย่องมากแล้ว 🌾"
+        </p>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: VENTING BOX (ระบายความรู้สึก)       -->
+    <!-- ========================================== -->
+    <section id="tab-vent" class="tab-pane hidden space-y-6">
+      
+      <div class="glass-card rounded-3xl p-6 sm:p-8 text-center relative border border-earth-200">
+        <span class="inline-block text-xs font-semibold px-3 py-1 bg-terracotta-100 text-terracotta-800 rounded-full mb-3 border border-terracotta-200">
+          Safe Venting Space 🕊️
+        </span>
+        <h2 class="font-heading text-2xl sm:text-3xl font-semibold text-earth-900 mb-2">
+          ห้องระบายความรู้สึกที่ไร้การตัดสิน
+        </h2>
+        <p class="text-sm text-earth-600 max-w-md mx-auto">
+          มีอะไรที่อึดอัด คับข้องใจ หรืออยากตะโกนออกมาไหม? พิมพ์ทุกอย่างลงในกระดาษนี้ได้เต็มที่เลย
+        </p>
+      </div>
+
+      <!-- Venting Canvas Area -->
+      <div class="relative glass-card rounded-3xl p-6 sm:p-8 shadow-lg border border-earth-200 overflow-hidden" id="vent-card">
+        
+        <!-- Canvas for particle dissolving effect -->
+        <canvas id="particles-canvas"></canvas>
+
+        <div id="vent-input-area" class="space-y-4">
+          <div class="flex items-center justify-between text-xs text-earth-500">
+            <span class="flex items-center gap-1.5 text-earth-800 font-medium">
+              <i data-lucide="edit-3" class="w-3.5 h-3.5 text-terracotta-600"></i> พื้นที่เขียนอิสระ
+            </span>
+            <span id="vent-char-count">0 ตัวอักษร</span>
+          </div>
+
+          <textarea id="vent-textarea" rows="8" class="w-full p-4 rounded-2xl border border-earth-200 bg-white/90 focus:ring-2 focus:ring-terracotta-300 focus:outline-none text-sm text-earth-800 placeholder-earth-400 leading-relaxed transition" placeholder="พิมพ์สิ่งที่อยู่ในใจได้เต็มที่ ไม่ต้องเรียบเรียง ไม่ต้องกังวลว่าใครจะอ่าน ไม่มีถูกหรือผิด..."></textarea>
+
+          <!-- Checkbox: Save Secretly or Discard entirely (Earth Tone styling) -->
+          <div class="flex items-center justify-between flex-wrap gap-3 pt-2">
+            <label class="flex items-center space-x-2.5 text-xs text-earth-700 cursor-pointer select-none">
+              <input type="checkbox" id="vent-save-checkbox" class="w-4 h-4 rounded text-terracotta-600 focus:ring-terracotta-400 border-earth-300">
+              <span class="flex items-center gap-1">
+                <i data-lucide="lock" class="w-3.5 h-3.5 text-earth-500"></i>
+                บันทึกเก็บเป็นความลับไว้ในประวัติ (หากไม่เลือก ข้อความจะถูกสลายทิ้งถาวร)
+              </span>
+            </label>
+
+            <button type="button" onclick="clearVentInput()" class="text-xs text-earth-500 hover:text-earth-800 transition">
+              ล้างข้อความ
+            </button>
+          </div>
+
+          <!-- The Release Button -->
+          <div class="pt-4 text-center">
+            <button type="button" id="release-btn" onclick="releaseVenting()" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-terracotta-600 via-earth-700 to-sage-600 hover:from-terracotta-700 hover:to-sage-700 text-white font-heading font-medium text-sm sm:text-base shadow-lg shadow-terracotta-200/50 hover:shadow-xl transition-all transform active:scale-95 flex items-center justify-center gap-2 mx-auto">
+              <i data-lucide="wind" class="w-5 h-5"></i>
+              ปล่อยความรู้สึกนี้ไป (Release)
+            </button>
+            <p class="text-[11px] text-earth-400 mt-2">
+              เมื่อกดแล้ว ข้อความจะค่อยๆ สลายหายไป เพื่อให้จิตใจของเธอได้คลายความหนักอึ้ง
+            </p>
+          </div>
+        </div>
+
+        <!-- Release Success Message Overlay -->
+        <div id="vent-released-overlay" class="hidden text-center py-12 space-y-4">
+          <div class="w-16 h-16 mx-auto rounded-full bg-terracotta-100 text-terracotta-600 flex items-center justify-center animate-bounce">
+            <i data-lucide="feather" class="w-8 h-8"></i>
+          </div>
+          <h3 class="font-heading text-xl font-semibold text-earth-900">
+            ความรู้สึกหนักอึ้งได้ลอยหายไปแล้ว...
+          </h3>
+          <p class="text-sm text-earth-600 max-w-sm mx-auto leading-relaxed">
+            ตอนนี้ใจเธอเริ่มเบาขึ้นแล้วนะ หายใจเข้าลึกๆ ยืดเส้นยืดสาย แล้วกลับมาใจดีกับตัวเองในนาทีนี้นะ 🌾
+          </p>
+          <div class="pt-2">
+            <button onclick="resetVentBox()" class="px-5 py-2 text-xs font-medium bg-white text-earth-800 border border-earth-300 rounded-full hover:bg-earth-100 transition shadow-sm">
+              เขียนใหม่อีกครั้ง
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: SELF-DISCOVERY / REFLECTION PROMPTS -->
+    <!-- ========================================== -->
+    <section id="tab-prompts" class="tab-pane hidden space-y-6">
+      
+      <div class="glass-card rounded-3xl p-6 sm:p-8 text-center relative border border-earth-200">
+        <span class="inline-block text-xs font-semibold px-3 py-1 bg-sage-100 text-sage-800 rounded-full mb-3 border border-sage-200">
+          Self-Reflection Deck 🔮
+        </span>
+        <h2 class="font-heading text-2xl sm:text-3xl font-semibold text-earth-900 mb-2">
+          การ์ดสะท้อนคิดเพื่อเข้าใจตัวเอง
+        </h2>
+        <p class="text-sm text-earth-600 max-w-md mx-auto">
+          คำถามเชิงจิตวิทยาเบาๆ ที่จะช่วยให้เธอได้หยุดฟังเสียงข้างใน และค้นพบสิ่งที่มีความหมาย
+        </p>
+      </div>
+
+      <!-- Interactive Prompt Card Container -->
+      <div class="max-w-xl mx-auto">
+        <div id="reflection-card" class="glass-card rounded-3xl p-6 sm:p-8 border border-earth-200 shadow-xl transition-all duration-500 text-center space-y-5 relative overflow-hidden">
+          
+          <div class="flex items-center justify-between">
+            <span id="prompt-category" class="text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-sage-100 text-sage-800 border border-sage-200">
+              การใจดีกับตัวเอง
+            </span>
+            <button onclick="drawNewPrompt()" class="flex items-center gap-1.5 text-xs text-earth-700 hover:text-earth-900 font-medium bg-earth-100 px-3 py-1.5 rounded-full border border-earth-200 transition">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+              สุ่มคำถามใหม่
+            </button>
+          </div>
+
+          <!-- Prompt Question Text -->
+          <div class="py-4">
+            <p class="text-3xl mb-3">💭</p>
+            <h3 id="prompt-question" class="font-heading text-lg sm:text-xl font-medium text-earth-900 leading-snug">
+              "วันนี้มีเรื่องเล็กๆ อะไรบ้างที่ทำให้เรายิ้มได้ แม้จะเป็นเพียงเสี้ยววินาที?"
+            </h3>
+          </div>
+
+          <!-- Prompt Answer Box -->
+          <div class="space-y-3 pt-2 text-left">
+            <label for="prompt-answer" class="text-xs text-earth-600 font-medium">บันทึกคำตอบในใจของเธอ:</label>
+            <textarea id="prompt-answer" rows="3" class="w-full p-3.5 rounded-2xl border border-earth-200 bg-white/90 focus:ring-2 focus:ring-terracotta-300 focus:outline-none text-sm text-earth-800 placeholder-earth-400 transition" placeholder="สิ่งที่คิดแวบแรกในใจคือ..."></textarea>
+            
+            <button onclick="savePromptReflection()" class="w-full py-2.5 rounded-xl bg-earth-700 hover:bg-earth-800 text-white font-medium text-xs sm:text-sm shadow-md shadow-earth-300 transition flex items-center justify-center gap-1.5">
+              <i data-lucide="bookmark" class="w-4 h-4"></i>
+              บันทึกคำสะท้อนคิดนี้
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Saved Reflections List Preview -->
+      <div class="space-y-3 max-w-xl mx-auto pt-4">
+        <h4 class="text-xs font-semibold text-earth-700 uppercase tracking-wider flex items-center gap-1.5">
+          <i data-lucide="history" class="w-3.5 h-3.5 text-earth-500"></i> บันทึกสะท้อนคิดที่ผ่านมา
+        </h4>
+        <div id="saved-reflections-list" class="space-y-2.5">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: HISTORY & INSIGHTS (ปฏิทิน & ประวัติ)-->
+    <!-- ========================================== -->
+    <section id="tab-history" class="tab-pane hidden space-y-6">
+      
+      <!-- Summary Stats Row -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="glass-card rounded-2xl p-4 text-center border border-earth-200">
+          <span class="text-xs text-earth-500">เช็กอินทั้งหมด</span>
+          <p id="stat-total-checkins" class="font-heading text-2xl font-semibold text-earth-800 mt-1">0</p>
+          <span class="text-[10px] text-earth-400">ครั้ง</span>
+        </div>
+        <div class="glass-card rounded-2xl p-4 text-center border border-earth-200">
+          <span class="text-xs text-earth-500">วันต่อเนื่อง</span>
+          <p id="stat-streak" class="font-heading text-2xl font-semibold text-terracotta-600 mt-1">0</p>
+          <span class="text-[10px] text-earth-400">วันติดกัน 🔥</span>
+        </div>
+        <div class="glass-card rounded-2xl p-4 text-center border border-earth-200">
+          <span class="text-xs text-earth-500">อารมณ์บ่อยสุด</span>
+          <p id="stat-top-mood" class="font-heading text-xl font-semibold text-sage-700 mt-1">-</p>
+          <span class="text-[10px] text-earth-400">ช่วงนี้</span>
+        </div>
+        <div class="glass-card rounded-2xl p-4 text-center border border-earth-200">
+          <span class="text-xs text-earth-500">ความเข้มข้นเฉลี่ย</span>
+          <p id="stat-avg-intensity" class="font-heading text-2xl font-semibold text-earth-700 mt-1">0</p>
+          <span class="text-[10px] text-earth-400">/ 10 คะแนน</span>
+        </div>
+      </div>
+
+      <!-- Calendar & Mood History Card -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-lg border border-earth-200 space-y-6">
+        
+        <!-- Calendar Header Controls -->
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 id="calendar-month-year" class="font-heading text-lg sm:text-xl font-semibold text-earth-900">
+              พฤศจิกายน 2026
+            </h3>
+            <p class="text-xs text-earth-400">แตะที่วันเพื่อดูรายละเอียดอารมณ์</p>
+          </div>
+          <div class="flex items-center space-x-1">
+            <button onclick="changeMonth(-1)" class="p-2 rounded-xl bg-earth-100 hover:bg-earth-200 text-earth-800 transition">
+              <i data-lucide="chevron-left" class="w-4 h-4"></i>
+            </button>
+            <button onclick="resetToCurrentMonth()" class="px-2.5 py-1 text-xs rounded-xl bg-earth-100 hover:bg-earth-200 text-earth-800 font-medium transition">
+              วันนี้
+            </button>
+            <button onclick="changeMonth(1)" class="p-2 rounded-xl bg-earth-100 hover:bg-earth-200 text-earth-800 transition">
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Calendar Weekday Headers -->
+        <div class="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-earth-400 pb-2 border-b border-earth-200">
+          <span class="text-terracotta-600">อา</span>
+          <span>จ</span>
+          <span>อ</span>
+          <span>พ</span>
+          <span>พฤ</span>
+          <span>ศ</span>
+          <span class="text-sage-600">ส</span>
+        </div>
+
+        <!-- Calendar Days Grid -->
+        <div id="calendar-grid" class="grid grid-cols-7 gap-1.5 sm:gap-2">
+          <!-- Days populated dynamically by JS -->
+        </div>
+
+        <!-- Mood Color Legend (Earth Tone Palette) -->
+        <div class="flex flex-wrap items-center justify-center gap-3 pt-3 border-t border-earth-200 text-xs text-earth-600">
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> สดใส</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-sage-600"></span> สงบ</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-terracotta-500"></span> ซาบซึ้ง</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-stone-500"></span> กังวล</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-earth-600"></span> เหนื่อย</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-gray-400"></span> ว่างเปล่า</span>
+        </div>
+
+      </div>
+
+      <!-- Recent Check-ins Timeline List -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 border border-earth-200 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-heading text-base font-semibold text-earth-900 flex items-center gap-2">
+            <i data-lucide="list" class="w-4 h-4 text-earth-600"></i>
+            บันทึกความรู้สึกย้อนหลัง
+          </h3>
+          <!-- Export / Backup button -->
+          <div class="flex items-center gap-2">
+            <button onclick="exportDataJSON()" class="text-xs text-earth-700 hover:text-earth-900 font-medium flex items-center gap-1 bg-earth-100 hover:bg-earth-200 px-3 py-1 rounded-lg transition">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i> สำรองข้อมูล
+            </button>
+          </div>
+        </div>
+
+        <div id="checkins-history-list" class="space-y-3">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Secret Vents Archive Section (If any saved) -->
+      <div id="secret-vents-container" class="glass-card rounded-3xl p-6 sm:p-8 border border-earth-200 space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <i data-lucide="lock" class="w-4 h-4 text-terracotta-600"></i>
+            <h3 class="font-heading text-base font-semibold text-earth-900">
+              กล่องเก็บความรู้สึกที่เป็นความลับ
+            </h3>
+          </div>
+          <button id="toggle-secret-btn" onclick="toggleSecretVentsVisibility()" class="text-xs text-terracotta-700 hover:text-terracotta-800 font-medium flex items-center gap-1">
+            <i data-lucide="eye" class="w-3.5 h-3.5"></i> แสดงข้อความลับ
+          </button>
+        </div>
+        <p class="text-xs text-earth-400">ข้อความจาก Venting Box ที่คุณเลือกติ๊ก "บันทึกเก็บเป็นความลับ" ไว้</p>
+        <div id="secret-vents-list" class="space-y-2.5 hidden">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 5: BREATHING GUIDE (ฝึกหายใจ 4-7-8)    -->
+    <!-- ========================================== -->
+    <section id="tab-breathing" class="tab-pane hidden space-y-6">
+      
+      <div class="glass-card rounded-3xl p-6 sm:p-8 text-center relative border border-earth-200">
+        <span class="inline-block text-xs font-semibold px-3 py-1 bg-sage-100 text-sage-800 rounded-full mb-3 border border-sage-200">
+          4-7-8 Breathing Calm 🫁
+        </span>
+        <h2 class="font-heading text-2xl sm:text-3xl font-semibold text-earth-900 mb-2">
+          พาใจและร่างกายกลับสู่ความสงบ
+        </h2>
+        <p class="text-sm text-earth-600 max-w-md mx-auto">
+          เทคนิคการหายใจแบบ 4-7-8 ช่วยกระตุ้นระบบประสาทพาราซิมพาเทติก ลดอัตราการเต้นของหัวใจ และคลายความกังวล
+        </p>
+      </div>
+
+      <!-- Interactive Breathing Bubble Container (Warm Earth & Sage) -->
+      <div class="glass-card rounded-3xl p-8 sm:p-12 text-center shadow-lg border border-earth-200 flex flex-col items-center justify-center min-h-[380px] relative overflow-hidden">
+        
+        <!-- Animated Expanding / Contracting Circle -->
+        <div class="relative w-64 h-64 flex items-center justify-center">
+          <!-- Outer Warm Glow -->
+          <div id="breathing-glow" class="absolute inset-0 rounded-full bg-gradient-to-tr from-sage-300/40 via-terracotta-300/30 to-earth-300/40 blur-2xl transition-all duration-1000"></div>
+          
+          <!-- Animated Bubble in Earth & Sage tones -->
+          <div id="breathing-circle" class="w-40 h-40 rounded-full bg-gradient-to-tr from-sage-500 via-earth-600 to-terracotta-500 flex flex-col items-center justify-center text-white shadow-2xl transition-all duration-[4000ms] ease-in-out">
+            <span id="breathing-text" class="font-heading text-lg font-medium tracking-wide">เตรียมพร้อม</span>
+            <span id="breathing-countdown" class="text-2xl font-bold font-mitr mt-1">4</span>
+          </div>
+        </div>
+
+        <!-- Instruction Status -->
+        <div class="mt-8 space-y-2">
+          <p id="breathing-step-desc" class="text-sm font-medium text-earth-800">
+            แตะปุ่มด้านล่างเพื่อเริ่มฝึกการหายใจ
+          </p>
+          <p class="text-xs text-earth-400">
+            หายใจเข้าทางจมูก (4 วินาที) • กลั้นเบาๆ (7 วินาที) • ผ่อนลมหายใจออกทางปาก (8 วินาที)
+          </p>
+        </div>
+
+        <!-- Control Buttons -->
+        <div class="mt-6 flex items-center gap-3">
+          <button id="breathing-toggle-btn" onclick="toggleBreathingGuide()" class="px-7 py-3 rounded-2xl bg-earth-700 hover:bg-earth-800 text-white font-heading font-medium text-sm shadow-md shadow-earth-300/50 transition flex items-center gap-2">
+            <i id="breathing-icon" data-lucide="play" class="w-4 h-4"></i>
+            <span id="breathing-btn-text">เริ่มฝึกหายใจ</span>
+          </button>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Mobile Bottom Navigation Bar (Earth Tone) -->
+  <div class="fixed bottom-0 left-0 right-0 z-40 bg-earth-50/90 backdrop-blur-md border-t border-earth-200 md:hidden px-2 py-1.5">
+    <div class="flex items-center justify-around">
+      <button onclick="switchTab('checkin')" id="mob-nav-checkin" class="mob-nav-tab flex flex-col items-center py-1 px-2 text-earth-900">
+        <i data-lucide="smile" class="w-5 h-5 text-terracotta-600"></i>
+        <span class="text-[10px] mt-0.5 font-medium">เช็กอิน</span>
+      </button>
+      <button onclick="switchTab('vent')" id="mob-nav-vent" class="mob-nav-tab flex flex-col items-center py-1 px-2 text-earth-400">
+        <i data-lucide="feather" class="w-5 h-5"></i>
+        <span class="text-[10px] mt-0.5 font-medium">ระบายใจ</span>
+      </button>
+      <button onclick="switchTab('prompts')" id="mob-nav-prompts" class="mob-nav-tab flex flex-col items-center py-1 px-2 text-earth-400">
+        <i data-lucide="compass" class="w-5 h-5"></i>
+        <span class="text-[10px] mt-0.5 font-medium">สะท้อนคิด</span>
+      </button>
+      <button onclick="switchTab('history')" id="mob-nav-history" class="mob-nav-tab flex flex-col items-center py-1 px-2 text-earth-400">
+        <i data-lucide="calendar" class="w-5 h-5"></i>
+        <span class="text-[10px] mt-0.5 font-medium">ประวัติ</span>
+      </button>
+      <button onclick="switchTab('breathing')" id="mob-nav-breathing" class="mob-nav-tab flex flex-col items-center py-1 px-2 text-earth-400">
+        <i data-lucide="heart" class="w-5 h-5"></i>
+        <span class="text-[10px] mt-0.5 font-medium">พักใจ</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal: Day Detail Inspection (Earth Tone) -->
+  <div id="day-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass-card rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-earth-200 space-y-4 animate-in fade-in zoom-in duration-200">
+      <div class="flex items-center justify-between border-b border-earth-200 pb-3">
+        <div class="flex items-center gap-2">
+          <span id="modal-emoji" class="text-2xl">☀️</span>
+          <div>
+            <h4 id="modal-date" class="font-heading font-medium text-base text-earth-900">10 พฤศจิกายน 2026</h4>
+            <span id="modal-mood-name" class="text-xs text-terracotta-700 font-medium">สดใส ร่าเริง</span>
+          </div>
+        </div>
+        <button onclick="closeDayModal()" class="w-8 h-8 rounded-full bg-earth-100 hover:bg-earth-200 flex items-center justify-center text-earth-500 hover:text-earth-800 transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-sm">
+        <div class="bg-earth-100/70 p-3 rounded-2xl flex items-center justify-between text-xs">
+          <span class="text-earth-600">ระดับความเข้มข้น:</span>
+          <span id="modal-intensity" class="font-bold text-terracotta-700">8 / 10</span>
+        </div>
+
+        <div>
+          <span class="text-xs text-earth-400 block mb-1">หมวดหมู่ที่เกี่ยวข้อง:</span>
+          <div id="modal-tags" class="flex flex-wrap gap-1.5">
+            <!-- tags -->
+          </div>
+        </div>
+
+        <div>
+          <span class="text-xs text-earth-400 block mb-1">ข้อความบันทึก:</span>
+          <p id="modal-note" class="p-3 bg-white/90 rounded-2xl border border-earth-200 text-earth-800 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap"></p>
+        </div>
+      </div>
+
+      <div class="pt-2 text-right">
+        <button onclick="closeDayModal()" class="px-5 py-2 rounded-xl bg-earth-700 text-white text-xs font-medium hover:bg-earth-800 transition shadow-sm">
+          ปิดหน้าต่าง
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50 hidden transition-all duration-300">
+    <div class="flex items-center gap-2 px-5 py-3 rounded-2xl bg-earth-900/90 backdrop-blur-md text-white text-xs sm:text-sm shadow-xl border border-earth-700">
+      <span id="toast-icon">✨</span>
+      <span id="toast-msg">บันทึกสำเร็จ</span>
+    </div>
+  </div>
+
+  <!-- Application Logic -->
+  <script>
+    // ==========================================
+    // 1. DATA STORAGE & STATE
+    // ==========================================
+    const STORAGE_KEY_CHECKINS = 'serenemind_checkins_v1';
+    const STORAGE_KEY_VENTS = 'serenemind_vents_v1';
+    const STORAGE_KEY_REFLECTIONS = 'serenemind_reflections_v1';
+
+    let currentMood = {
+      key: 'happy',
+      name: 'สดใส ร่าเริง',
+      emoji: '☀️',
+      color: '#D97706',
+      bgColor: '#FEF3C7'
+    };
+    let currentIntensity = 5;
+    let selectedTags = [];
+
+    // Calendar state
+    let calendarDate = new Date();
+
+    // Psychological Reflection Prompts (Thai)
+    const reflectionPrompts = [
+      {
+        category: 'การใจดีกับตัวเอง',
+        question: 'ถ้าเพื่อนสนิทกำลังเจอเรื่องเหนื่อยล้าแบบที่เธอกำลังเจอในวันนี้ เธอจะบอกเขาด้วยคำพูดแบบไหน? ลองพูดคำนั้นกับตัวเองดูนะ'
+      },
+      {
+        category: 'ความสุขและสิ่งดีๆ',
+        question: 'วันนี้มีเรื่องเล็กๆ อะไรบ้างที่ทำให้เรายิ้มได้ แม้จะเป็นเพียงเสี้ยววินาที? (เช่น ชาอุ่นๆ สักแก้ว, แดดยามเช้า, เสียงเพลงสบายๆ)'
+      },
+      {
+        category: 'การคลี่คลายอารมณ์',
+        question: 'ในความรู้สึกหนักใจตอนนี้ มีสิ่งไหนบ้างที่เราควบคุมได้จริงๆ และสิ่งไหนที่เราต้องยอมรับและปล่อยวาง?'
+      },
+      {
+        category: 'การซาบซึ้งใจ',
+        question: 'ใครคือคนที่ทำให้เรารู้สึกขอบคุณในชีวิตช่วงนี้ แม้เขาอาจจะไม่ได้ทำอะไรยิ่งใหญ่เลยก็ตาม?'
+      },
+      {
+        category: 'พลังและการฟื้นฟู',
+        question: 'อะไรคือกิจกรรมที่ทำแล้วรู้สึกว่าได้ "เติมแบตเตอรี่" ให้หัวใจมากที่สุดในสัปดาห์นี้?'
+      },
+      {
+        category: 'ความเปราะบาง',
+        question: 'มีคำพูดหรือความรู้สึกอะไรที่เราเก็บไว้ข้างในและยังไม่กล้าบอกใครไหม? ทำไมสิ่งนั้นถึงยังติดอยู่ในใจเรา?'
+      },
+      {
+        category: 'การเติบโต',
+        question: 'หนึ่งปีที่แล้วกับวันนี้ มีเรื่องอะไรบ้างที่เราเก่งขึ้น นิ่งขึ้น หรือเข้าใจโลกได้มากกว่าเดิม?'
+      },
+      {
+        category: 'ความหวังและเป้าหมายเล็กๆ',
+        question: 'พรุ่งนี้เช้า สิ่งแรกที่เราอยากทำเพื่อดูแลสุขภาพกายหรือใจของตัวเองคืออะไร?'
+      }
+    ];
+
+    // ==========================================
+    // 2. INITIALIZATION
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      initCheckinForm();
+      renderCalendar();
+      updateHistoryStats();
+      renderRecentCheckins();
+      renderSavedReflections();
+      renderSecretVents();
+      drawNewPrompt();
+      setupVentListeners();
+    });
+
+    // ==========================================
+    // 3. NAVIGATION (Tabs)
+    // ==========================================
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      const activePane = document.getElementById(`tab-${tabId}`);
+      if (activePane) activePane.classList.remove('hidden');
+
+      // Update Desktop Nav styles (Earth Tone)
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        btn.classList.remove('text-earth-900', 'bg-white', 'shadow-sm', 'border', 'border-earth-200/60');
+        btn.classList.add('text-earth-600');
+      });
+      const activeNavBtn = document.getElementById(`nav-btn-${tabId}`);
+      if (activeNavBtn) {
+        activeNavBtn.classList.add('text-earth-900', 'bg-white', 'shadow-sm', 'border', 'border-earth-200/60');
+        activeNavBtn.classList.remove('text-earth-600');
+      }
+
+      // Update Mobile Nav styles
+      document.querySelectorAll('.mob-nav-tab').forEach(btn => {
+        btn.classList.remove('text-earth-900');
+        btn.classList.add('text-earth-400');
+      });
+      const activeMobBtn = document.getElementById(`mob-nav-${tabId}`);
+      if (activeMobBtn) {
+        activeMobBtn.classList.add('text-earth-900');
+        activeMobBtn.classList.remove('text-earth-400');
+      }
+
+      if (tabId === 'history') {
+        renderCalendar();
+        updateHistoryStats();
+        renderRecentCheckins();
+        renderSecretVents();
+      }
+
+      lucide.createIcons();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ==========================================
+    // 4. DAILY CHECK-IN FEATURE
+    // ==========================================
+    function initCheckinForm() {
+      selectMood('happy', 'สดใส ร่าเริง', '☀️', '#D97706', '#FEF3C7');
+    }
+
+    function selectMood(key, name, emoji, color, bgColor) {
+      currentMood = { key, name, emoji, color, bgColor };
+      
+      document.querySelectorAll('.mood-btn').forEach(btn => {
+        btn.classList.remove('border-earth-600', 'bg-earth-100/90', 'ring-2', 'ring-earth-300');
+        if (btn.getAttribute('data-mood') === key) {
+          btn.classList.add('border-earth-600', 'bg-earth-100/90', 'ring-2', 'ring-earth-300');
+        }
+      });
+    }
+
+    function updateIntensity(val) {
+      currentIntensity = parseInt(val, 10);
+      document.getElementById('intensity-badge').textContent = `ระดับ ${val} / 10`;
+      
+      const descriptions = [
+        "",
+        "บางเบามาก แทบไม่รบกวนจิตใจ",
+        "แผ่วเบา สบายๆ",
+        "รู้สึกได้เล็กน้อย",
+        "ระดับเริ่มชัดเจน",
+        "รู้สึกได้พอสมควร อยู่ในระดับที่รับมือได้",
+        "รู้สึกค่อนข้างชัดเจน มีอิทธิพลต่อความคิด",
+        "เข้มข้นมาก เริ่มส่งผลต่อสมาธิ",
+        "หนักหน่วง ชัดเจนมากในใจ",
+        "ท่วมท้น เต็มไปด้วยความรู้สึก",
+        "เข้มข้นขั้นสุด ล้นใจ ต้องการการพักใจทันที"
+      ];
+      document.getElementById('intensity-desc').textContent = `"${descriptions[currentIntensity]}"`;
+    }
+
+    function toggleTag(btn, tagName) {
+      if (selectedTags.includes(tagName)) {
+        selectedTags = selectedTags.filter(t => t !== tagName);
+        btn.classList.remove('bg-earth-700', 'text-white', 'border-earth-700');
+        btn.classList.add('bg-white', 'text-earth-700', 'border-earth-200');
+      } else {
+        selectedTags.push(tagName);
+        btn.classList.add('bg-earth-700', 'text-white', 'border-earth-700');
+        btn.classList.remove('bg-white', 'text-earth-700', 'border-earth-200');
+      }
+    }
+
+    function saveCheckin() {
+      const note = document.getElementById('checkin-note').value.trim();
+      const now = new Date();
+
+      const entry = {
+        id: 'chk_' + Date.now(),
+        dateStr: now.toISOString().split('T')[0], // YYYY-MM-DD
+        timestamp: now.getTime(),
+        mood: currentMood,
+        intensity: currentIntensity,
+        tags: [...selectedTags],
+        note: note
+      };
+
+      const existing = JSON.parse(localStorage.getItem(STORAGE_KEY_CHECKINS) || '[]');
+      
+      // Update or append today's entry
+      const existingTodayIndex = existing.findIndex(e => e.dateStr === entry.dateStr);
+      if (existingTodayIndex >= 0) {
+        existing[existingTodayIndex] = entry;
+      } else {
+        existing.unshift(entry);
+      }
+
+      localStorage.setItem(STORAGE_KEY_CHECKINS, JSON.stringify(existing));
+      
+      showToast("🌿 โอบกอดตัวเองในวันนี้นะ บันทึกอารมณ์สำเร็จแล้ว!");
+      
+      document.getElementById('checkin-note').value = '';
+      
+      updateHistoryStats();
+      renderCalendar();
+      renderRecentCheckins();
+    }
+
+    // ==========================================
+    // 5. VENTING BOX FEATURE
+    // ==========================================
+    function setupVentListeners() {
+      const textarea = document.getElementById('vent-textarea');
+      const counter = document.getElementById('vent-char-count');
+      if (textarea && counter) {
+        textarea.addEventListener('input', () => {
+          counter.textContent = `${textarea.value.length} ตัวอักษร`;
+        });
+      }
+    }
+
+    function clearVentInput() {
+      const textarea = document.getElementById('vent-textarea');
+      textarea.value = '';
+      document.getElementById('vent-char-count').textContent = '0 ตัวอักษร';
+      textarea.focus();
+    }
+
+    function releaseVenting() {
+      const textarea = document.getElementById('vent-textarea');
+      const text = textarea.value.trim();
+      if (!text) {
+        showToast("เขียนอะไรสักนิดก่อนปล่อยวางนะ 🌱");
+        return;
+      }
+
+      const saveSecretly = document.getElementById('vent-save-checkbox').checked;
+
+      if (saveSecretly) {
+        const secretVents = JSON.parse(localStorage.getItem(STORAGE_KEY_VENTS) || '[]');
+        secretVents.unshift({
+          id: 'vent_' + Date.now(),
+          timestamp: Date.now(),
+          dateStr: new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+          text: text
+        });
+        localStorage.setItem(STORAGE_KEY_VENTS, JSON.stringify(secretVents));
+      }
+
+      // Warm earth particle dissolve animation
+      triggerVentParticles();
+      textarea.classList.add('dissolving');
+
+      // Play soft whoosh chime
+      playSoftReleaseSound();
+
+      setTimeout(() => {
+        document.getElementById('vent-input-area').classList.add('hidden');
+        document.getElementById('vent-released-overlay').classList.remove('hidden');
+        textarea.value = '';
+        document.getElementById('vent-char-count').textContent = '0 ตัวอักษร';
+        textarea.classList.remove('dissolving');
+        lucide.createIcons();
+      }, 1600);
+    }
+
+    function resetVentBox() {
+      document.getElementById('vent-released-overlay').classList.add('hidden');
+      document.getElementById('vent-input-area').classList.remove('hidden');
+      document.getElementById('vent-save-checkbox').checked = false;
+      document.getElementById('vent-textarea').focus();
+    }
+
+    function triggerVentParticles() {
+      const canvas = document.getElementById('particles-canvas');
+      const ctx = canvas.getContext('2d');
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+
+      const particles = [];
+      const particleCount = 45;
+      // Warm Earth Tone particle colors: Terracotta, Warm Sand, Sage, Golden Honey, Crisp White
+      const colors = ['#E6B7A1', '#B4C2AA', '#D7CAB8', '#FAF4E4', '#D49072', '#FFFFFF'];
+
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: canvas.height * 0.4 + Math.random() * (canvas.height * 0.4),
+          radius: Math.random() * 4 + 1.5,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          vx: (Math.random() - 0.5) * 3,
+          vy: -(Math.random() * 3 + 1.5),
+          alpha: 1,
+          decay: Math.random() * 0.015 + 0.008
+        });
+      }
+
+      let animationFrame;
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.alpha -= p.decay;
+
+          if (p.alpha > 0) {
+            alive = true;
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+        });
+
+        if (alive) {
+          animationFrame = requestAnimationFrame(animate);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          cancelAnimationFrame(animationFrame);
+        }
+      }
+      animate();
+    }
+
+    // ==========================================
+    // 6. SELF-DISCOVERY / REFLECTION PROMPTS
+    // ==========================================
+    let currentPromptIndex = 0;
+
+    function drawNewPrompt() {
+      const card = document.getElementById('reflection-card');
+      card.classList.add('opacity-40', 'scale-95');
+
+      setTimeout(() => {
+        let nextIndex;
+        do {
+          nextIndex = Math.floor(Math.random() * reflectionPrompts.length);
+        } while (nextIndex === currentPromptIndex && reflectionPrompts.length > 1);
+
+        currentPromptIndex = nextIndex;
+        const p = reflectionPrompts[currentPromptIndex];
+
+        document.getElementById('prompt-category').textContent = p.category;
+        document.getElementById('prompt-question').textContent = `"${p.question}"`;
+        document.getElementById('prompt-answer').value = '';
+
+        card.classList.remove('opacity-40', 'scale-95');
+      }, 250);
+    }
+
+    function savePromptReflection() {
+      const answer = document.getElementById('prompt-answer').value.trim();
+      if (!answer) {
+        showToast("พิมพ์คำตอบในใจสักนิดนะ 💭");
+        return;
+      }
+
+      const p = reflectionPrompts[currentPromptIndex];
+      const reflections = JSON.parse(localStorage.getItem(STORAGE_KEY_REFLECTIONS) || '[]');
+      
+      reflections.unshift({
+        id: 'ref_' + Date.now(),
+        timestamp: Date.now(),
+        dateStr: new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' }),
+        category: p.category,
+        question: p.question,
+        answer: answer
+      });
+
+      localStorage.setItem(STORAGE_KEY_REFLECTIONS, JSON.stringify(reflections));
+      showToast("✨ บันทึกการสะท้อนคิดเรียบร้อยแล้ว");
+      document.getElementById('prompt-answer').value = '';
+      renderSavedReflections();
+    }
+
+    function renderSavedReflections() {
+      const container = document.getElementById('saved-reflections-list');
+      const reflections = JSON.parse(localStorage.getItem(STORAGE_KEY_REFLECTIONS) || '[]');
+
+      if (reflections.length === 0) {
+        container.innerHTML = `
+          <div class="p-4 rounded-2xl bg-white/70 border border-earth-200 text-center text-xs text-earth-400">
+            ยังไม่มีบันทึกสะท้อนคิด ลองสุ่มคำถามแล้วบันทึกคำตอบดูนะ 🌱
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = reflections.slice(0, 4).map(r => `
+        <div class="glass-card rounded-2xl p-4 border border-earth-200 space-y-1.5 text-xs text-earth-700">
+          <div class="flex items-center justify-between">
+            <span class="font-semibold text-sage-800 px-2.5 py-0.5 bg-sage-100 rounded-full text-[10px] border border-sage-200">${r.category}</span>
+            <span class="text-[11px] text-earth-400">${r.dateStr}</span>
+          </div>
+          <p class="font-medium text-earth-900 italic">"${r.question}"</p>
+          <p class="text-earth-700 bg-white/80 p-2.5 rounded-xl border border-earth-100 leading-relaxed">${r.answer}</p>
+        </div>
+      `).join('');
+    }
+
+    // ==========================================
+    // 7. CALENDAR & HISTORY & INSIGHTS
+    // ==========================================
+    const thaiMonths = [
+      "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+      "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+    ];
+
+    function changeMonth(direction) {
+      calendarDate.setMonth(calendarDate.getMonth() + direction);
+      renderCalendar();
+    }
+
+    function resetToCurrentMonth() {
+      calendarDate = new Date();
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      const year = calendarDate.getFullYear();
+      const month = calendarDate.getMonth();
+
+      const thaiYear = year + 543;
+      document.getElementById('calendar-month-year').textContent = `${thaiMonths[month]} ${thaiYear}`;
+
+      const firstDayOfMonth = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      const checkins = JSON.parse(localStorage.getItem(STORAGE_KEY_CHECKINS) || '[]');
+      const checkinsMap = {};
+      checkins.forEach(c => {
+        checkinsMap[c.dateStr] = c;
+      });
+
+      const grid = document.getElementById('calendar-grid');
+      grid.innerHTML = '';
+
+      for (let i = 0; i < firstDayOfMonth; i++) {
+        const blank = document.createElement('div');
+        blank.className = 'h-12 sm:h-14 rounded-2xl opacity-0 pointer-events-none';
+        grid.appendChild(blank);
+      }
+
+      const todayStr = new Date().toISOString().split('T')[0];
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const entry = checkinsMap[dayStr];
+        const isToday = dayStr === todayStr;
+
+        const dayCell = document.createElement('div');
+        dayCell.className = `h-12 sm:h-14 rounded-2xl p-1.5 flex flex-col items-center justify-between text-xs transition cursor-pointer border ${
+          isToday ? 'border-terracotta-500 bg-terracotta-50/90 font-bold text-terracotta-800' : 'border-earth-200/80 bg-white/70 hover:bg-white'
+        } ${entry ? 'shadow-sm' : ''}`;
+
+        let moodBadge = '';
+        if (entry) {
+          moodBadge = `
+            <span class="text-base sm:text-lg animate-in fade-in" title="${entry.mood.name} (${entry.intensity}/10)">
+              ${entry.mood.emoji}
+            </span>
+          `;
+          dayCell.onclick = () => openDayModal(entry, day, thaiMonths[month], thaiYear);
+        } else {
+          moodBadge = `<span class="w-1.5 h-1.5 rounded-full bg-earth-200"></span>`;
+          dayCell.onclick = () => {
+            showToast(`วันที่ ${day} ${thaiMonths[month]} ยังไม่ได้บันทึกอารมณ์`);
+          };
+        }
+
+        dayCell.innerHTML = `
+          <span class="text-[11px] ${isToday ? 'text-terracotta-700' : 'text-earth-500'}">${day}</span>
+          ${moodBadge}
+        `;
+
+        grid.appendChild(dayCell);
+      }
+    }
+
+    function openDayModal(entry, day, monthName, year) {
+      document.getElementById('modal-emoji').textContent = entry.mood.emoji;
+      document.getElementById('modal-mood-name').textContent = entry.mood.name;
+      document.getElementById('modal-date').textContent = `${day} ${monthName} ${year}`;
+      document.getElementById('modal-intensity').textContent = `${entry.intensity} / 10`;
+      
+      const tagsContainer = document.getElementById('modal-tags');
+      if (entry.tags && entry.tags.length > 0) {
+        tagsContainer.innerHTML = entry.tags.map(t => `
+          <span class="px-2.5 py-0.5 rounded-full bg-earth-100 text-earth-800 text-[10px] font-medium border border-earth-200">
+            ${t}
+          </span>
+        `).join('');
+      } else {
+        tagsContainer.innerHTML = '<span class="text-[11px] text-earth-400">ไม่ได้ระบุหมวดหมู่</span>';
+      }
+
+      document.getElementById('modal-note').textContent = entry.note || '(ไม่มีข้อความบันทึกสั้นในวันนี้)';
+      
+      document.getElementById('day-modal').classList.remove('hidden');
+    }
+
+    function closeDayModal() {
+      document.getElementById('day-modal').classList.add('hidden');
+    }
+
+    function updateHistoryStats() {
+      const checkins = JSON.parse(localStorage.getItem(STORAGE_KEY_CHECKINS) || '[]');
+      
+      document.getElementById('stat-total-checkins').textContent = checkins.length;
+
+      if (checkins.length === 0) {
+        document.getElementById('stat-streak').textContent = '0';
+        document.getElementById('stat-top-mood').textContent = '-';
+        document.getElementById('stat-avg-intensity').textContent = '0';
+        return;
+      }
+
+      // Calculate streak
+      let streak = 0;
+      const dateSet = new Set(checkins.map(c => c.dateStr));
+      let checkDate = new Date();
+      
+      while (true) {
+        const str = checkDate.toISOString().split('T')[0];
+        if (dateSet.has(str)) {
+          streak++;
+          checkDate.setDate(checkDate.getDate() - 1);
+        } else {
+          if (streak === 0) {
+            checkDate.setDate(checkDate.getDate() - 1);
+            const ystr = checkDate.toISOString().split('T')[0];
+            if (dateSet.has(ystr)) {
+              streak++;
+              checkDate.setDate(checkDate.getDate() - 1);
+              continue;
+            }
+          }
+          break;
+        }
+      }
+      document.getElementById('stat-streak').textContent = streak;
+
+      // Most frequent mood
+      const moodCounts = {};
+      let totalIntensity = 0;
+      checkins.forEach(c => {
+        moodCounts[c.mood.name] = (moodCounts[c.mood.name] || 0) + 1;
+        totalIntensity += (c.intensity || 5);
+      });
+
+      let topMood = '-';
+      let maxCount = 0;
+      for (const m in moodCounts) {
+        if (moodCounts[m] > maxCount) {
+          maxCount = moodCounts[m];
+          topMood = m;
+        }
+      }
+      document.getElementById('stat-top-mood').textContent = topMood;
+      document.getElementById('stat-avg-intensity').textContent = (totalIntensity / checkins.length).toFixed(1);
+    }
+
+    function renderRecentCheckins() {
+      const container = document.getElementById('checkins-history-list');
+      const checkins = JSON.parse(localStorage.getItem(STORAGE_KEY_CHECKINS) || '[]');
+
+      if (checkins.length === 0) {
+        container.innerHTML = `
+          <div class="p-6 text-center text-xs text-earth-400 bg-white/60 rounded-2xl border border-earth-200">
+            ยังไม่มีบันทึกอารมณ์เลย เริ่มเช็กอินแรกของเธอได้เลยนะ 🌿
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = checkins.slice(0, 6).map(c => {
+        const dateObj = new Date(c.timestamp);
+        const dateDisplay = dateObj.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
+        return `
+          <div class="p-4 rounded-2xl bg-white/80 border border-earth-200 flex items-start justify-between gap-3 shadow-sm hover:shadow-md transition">
+            <div class="flex items-start gap-3">
+              <span class="text-2xl p-2 rounded-2xl bg-earth-100">${c.mood.emoji}</span>
+              <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                  <span class="font-heading font-medium text-xs sm:text-sm text-earth-900">${c.mood.name}</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-earth-100 text-earth-700 font-semibold border border-earth-200">ระดับ ${c.intensity}/10</span>
+                </div>
+                <p class="text-xs text-earth-700 line-clamp-2">${c.note ? c.note : '<span class="text-earth-400 italic">ไม่มีบันทึกเพิ่มเติม</span>'}</p>
+                ${c.tags && c.tags.length > 0 ? `
+                  <div class="flex flex-wrap gap-1 pt-1">
+                    ${c.tags.map(t => `<span class="text-[9px] px-2 py-0.5 bg-earth-100 text-earth-600 rounded-md border border-earth-200/50">${t}</span>`).join('')}
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+            <span class="text-[11px] text-earth-400 whitespace-nowrap">${dateDisplay}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleSecretVentsVisibility() {
+      const list = document.getElementById('secret-vents-list');
+      const btn = document.getElementById('toggle-secret-btn');
+      if (list.classList.contains('hidden')) {
+        list.classList.remove('hidden');
+        btn.innerHTML = `<i data-lucide="eye-off" class="w-3.5 h-3.5"></i> ซ่อนข้อความลับ`;
+      } else {
+        list.classList.add('hidden');
+        btn.innerHTML = `<i data-lucide="eye" class="w-3.5 h-3.5"></i> แสดงข้อความลับ`;
+      }
+      lucide.createIcons();
+    }
+
+    function renderSecretVents() {
+      const container = document.getElementById('secret-vents-list');
+      const vents = JSON.parse(localStorage.getItem(STORAGE_KEY_VENTS) || '[]');
+
+      if (vents.length === 0) {
+        container.innerHTML = `
+          <div class="p-3 text-center text-xs text-earth-400 bg-white/50 rounded-xl">
+            ไม่มีบันทึกความรู้สึกที่เป็นความลับ
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = vents.map(v => `
+        <div class="p-3.5 rounded-2xl bg-white/80 border border-terracotta-200 text-xs space-y-1">
+          <div class="flex justify-between text-[10px] text-earth-400">
+            <span class="text-terracotta-600 font-medium">🔒 บันทึกลับ</span>
+            <span>${v.dateStr}</span>
+          </div>
+          <p class="text-earth-800 whitespace-pre-wrap leading-relaxed">${v.text}</p>
+        </div>
+      `).join('');
+    }
+
+    function exportDataJSON() {
+      const data = {
+        checkins: JSON.parse(localStorage.getItem(STORAGE_KEY_CHECKINS) || '[]'),
+        reflections: JSON.parse(localStorage.getItem(STORAGE_KEY_REFLECTIONS) || '[]'),
+        vents: JSON.parse(localStorage.getItem(STORAGE_KEY_VENTS) || '[]'),
+        exportDate: new Date().toISOString()
+      };
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `serenemind-earthtone-backup-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("💾 ส่งออกไฟล์สำรองข้อมูลเรียบร้อย");
+    }
+
+    // ==========================================
+    // 8. 4-7-8 BREATHING GUIDE CONTROLLER
+    // ==========================================
+    let breathingInterval = null;
+    let isBreathingActive = false;
+
+    function toggleBreathingGuide() {
+      if (isBreathingActive) {
+        stopBreathingGuide();
+      } else {
+        startBreathingGuide();
+      }
+    }
+
+    function startBreathingGuide() {
+      isBreathingActive = true;
+      document.getElementById('breathing-btn-text').textContent = 'หยุดพัก';
+      document.getElementById('breathing-icon').setAttribute('data-lucide', 'square');
+      lucide.createIcons();
+
+      runBreathingCycle();
+    }
+
+    function stopBreathingGuide() {
+      isBreathingActive = false;
+      clearInterval(breathingInterval);
+      document.getElementById('breathing-btn-text').textContent = 'เริ่มฝึกหายใจ';
+      document.getElementById('breathing-icon').setAttribute('data-lucide', 'play');
+      document.getElementById('breathing-text').textContent = 'พร้อม';
+      document.getElementById('breathing-countdown').textContent = '4';
+      document.getElementById('breathing-step-desc').textContent = 'แตะปุ่มเพื่อเริ่มรอบใหม่เมื่อพร้อม';
+      
+      const circle = document.getElementById('breathing-circle');
+      circle.style.transform = 'scale(1)';
+      circle.style.transitionDuration = '1000ms';
+      lucide.createIcons();
+    }
+
+    function runBreathingCycle() {
+      if (!isBreathingActive) return;
+
+      const circle = document.getElementById('breathing-circle');
+      const text = document.getElementById('breathing-text');
+      const countEl = document.getElementById('breathing-countdown');
+      const desc = document.getElementById('breathing-step-desc');
+
+      // PHASE 1: INHALE (4 Seconds)
+      text.textContent = 'หายใจเข้า';
+      desc.textContent = 'ค่อยๆ สูดลมหายใจเข้าลึกๆ ทางจมูก... 🌾';
+      circle.style.transitionDuration = '4000ms';
+      circle.style.transform = 'scale(1.5)';
+      
+      let sec = 4;
+      countEl.textContent = sec;
+      breathingInterval = setInterval(() => {
+        sec--;
+        if (sec > 0) {
+          countEl.textContent = sec;
+        } else {
+          clearInterval(breathingInterval);
+          if (!isBreathingActive) return;
+
+          // PHASE 2: HOLD (7 Seconds)
+          text.textContent = 'กลั้นไว้';
+          desc.textContent = 'กักเก็บความสงบไว้ในร่างกายอย่างผ่อนคลาย... 🌿';
+          let holdSec = 7;
+          countEl.textContent = holdSec;
+          breathingInterval = setInterval(() => {
+            holdSec--;
+            if (holdSec > 0) {
+              countEl.textContent = holdSec;
+            } else {
+              clearInterval(breathingInterval);
+              if (!isBreathingActive) return;
+
+              // PHASE 3: EXHALE (8 Seconds)
+              text.textContent = 'ผ่อนออก';
+              desc.textContent = 'ค่อยๆ ผ่อนลมหายใจออกทางปากช้าๆ ปล่อยทุกความตึงเครียด... 🕊️';
+              circle.style.transitionDuration = '8000ms';
+              circle.style.transform = 'scale(1)';
+
+              let exhaleSec = 8;
+              countEl.textContent = exhaleSec;
+              breathingInterval = setInterval(() => {
+                exhaleSec--;
+                if (exhaleSec > 0) {
+                  countEl.textContent = exhaleSec;
+                } else {
+                  clearInterval(breathingInterval);
+                  if (isBreathingActive) {
+                    runBreathingCycle();
+                  }
+                }
+              }, 1000);
+            }
+          }, 1000);
+        }
+      }, 1000);
+    }
+
+    // ==========================================
+    // 9. PROCEDURAL WEB AUDIO SYNTHESIZER
+    // ==========================================
+    let audioCtx = null;
+    let masterGain = null;
+    let currentAmbient = null;
+    let activeNodes = [];
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+        masterGain = audioCtx.createGain();
+        masterGain.gain.value = 0.3;
+        masterGain.connect(audioCtx.destination);
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function toggleAmbientMenu() {
+      const dropdown = document.getElementById('ambient-dropdown');
+      dropdown.classList.toggle('hidden');
+    }
+
+    document.addEventListener('click', (e) => {
+      const dropdown = document.getElementById('ambient-dropdown');
+      const btn = document.getElementById('ambient-btn');
+      if (dropdown && !dropdown.contains(e.target) && !btn.contains(e.target)) {
+        dropdown.classList.add('hidden');
+      }
+    });
+
+    function changeAmbientVolume(val) {
+      if (masterGain) {
+        masterGain.gain.setValueAtTime(parseFloat(val), audioCtx.currentTime);
+      }
+    }
+
+    function stopAmbientSound() {
+      activeNodes.forEach(node => {
+        try {
+          if (node.stop) node.stop();
+          if (node.disconnect) node.disconnect();
+        } catch(e) {}
+      });
+      activeNodes = [];
+      currentAmbient = null;
+
+      document.querySelectorAll('.sound-indicator').forEach(el => el.classList.add('opacity-0'));
+      document.getElementById('ambient-icon').setAttribute('data-lucide', 'volume-x');
+      document.getElementById('ambient-label').textContent = 'เสียงผ่อนคลาย';
+      lucide.createIcons();
+    }
+
+    function playAmbientSound(type) {
+      initAudio();
+      stopAmbientSound();
+
+      currentAmbient = type;
+
+      document.querySelectorAll('.ambient-opt').forEach(opt => {
+        const ind = opt.querySelector('.sound-indicator');
+        if (opt.getAttribute('data-sound') === type) {
+          ind.classList.remove('opacity-0');
+        } else {
+          ind.classList.add('opacity-0');
+        }
+      });
+
+      document.getElementById('ambient-icon').setAttribute('data-lucide', 'volume-2');
+      lucide.createIcons();
+
+      if (type === 'rain') {
+        createRainSound();
+        document.getElementById('ambient-label').textContent = '🌧️ ฝนตกพรำ';
+      } else if (type === 'waves') {
+        createWaveSound();
+        document.getElementById('ambient-label').textContent = '🌊 คลื่นทะเล';
+      } else if (type === 'fire') {
+        createFireSound();
+        document.getElementById('ambient-label').textContent = '🪵 กองไฟอบอุ่น';
+      } else if (type === 'zen') {
+        createZenBowlSound();
+        document.getElementById('ambient-label').textContent = '🔔 Zen Bowl';
+      }
+    }
+
+    function createRainSound() {
+      const bufferSize = 2 * audioCtx.sampleRate;
+      const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      let b0 = 0, b1 = 0, b2 = 0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        output[i] = (b0 + b1 + b2 + white * 0.5362) * 0.11;
+      }
+
+      const whiteNoise = audioCtx.createBufferSource();
+      whiteNoise.buffer = noiseBuffer;
+      whiteNoise.loop = true;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(800, audioCtx.currentTime);
+
+      whiteNoise.connect(filter);
+      filter.connect(masterGain);
+      whiteNoise.start();
+
+      activeNodes.push(whiteNoise, filter);
+    }
+
+    function createWaveSound() {
+      const bufferSize = 3 * audioCtx.sampleRate;
+      const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      let lastOut = 0.0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        output[i] = (lastOut + (0.02 * white)) / 1.02;
+        lastOut = output[i];
+        output[i] *= 3.5;
+      }
+
+      const brownNoise = audioCtx.createBufferSource();
+      brownNoise.buffer = noiseBuffer;
+      brownNoise.loop = true;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(350, audioCtx.currentTime);
+
+      const lfo = audioCtx.createOscillator();
+      lfo.frequency.setValueAtTime(0.12, audioCtx.currentTime);
+
+      const lfoGain = audioCtx.createGain();
+      lfoGain.gain.setValueAtTime(250, audioCtx.currentTime);
+
+      lfo.connect(filter.frequency);
+
+      const waveGain = audioCtx.createGain();
+      waveGain.gain.setValueAtTime(0.7, audioCtx.currentTime);
+
+      brownNoise.connect(filter);
+      filter.connect(waveGain);
+      waveGain.connect(masterGain);
+
+      brownNoise.start();
+      lfo.start();
+
+      activeNodes.push(brownNoise, filter, lfo, lfoGain, waveGain);
+    }
+
+    function createFireSound() {
+      const bufferSize = 2 * audioCtx.sampleRate;
+      const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        const r = Math.random();
+        if (r > 0.997) {
+          output[i] = (Math.random() * 2 - 1) * 0.9;
+        } else {
+          output[i] = (Math.random() * 2 - 1) * 0.04;
+        }
+      }
+
+      const fireSource = audioCtx.createBufferSource();
+      fireSource.buffer = noiseBuffer;
+      fireSource.loop = true;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(1400, audioCtx.currentTime);
+
+      fireSource.connect(filter);
+      filter.connect(masterGain);
+      fireSource.start();
+
+      activeNodes.push(fireSource, filter);
+    }
+
+    function createZenBowlSound() {
+      function strikeBowl() {
+        if (currentAmbient !== 'zen') return;
+
+        const baseFreq = 220;
+        const harmonics = [1, 2.76, 5.4, 8.9];
+        const gains = [0.4, 0.2, 0.08, 0.03];
+
+        harmonics.forEach((h, idx) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          
+          osc.frequency.setValueAtTime(baseFreq * h, audioCtx.currentTime);
+          gain.gain.setValueAtTime(gains[idx], audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 7.5);
+
+          osc.connect(gain);
+          gain.connect(masterGain);
+
+          osc.start();
+          osc.stop(audioCtx.currentTime + 8);
+          activeNodes.push(osc, gain);
+        });
+
+        const timer = setTimeout(strikeBowl, 8500);
+        activeNodes.push({ stop: () => clearTimeout(timer) });
+      }
+
+      strikeBowl();
+    }
+
+    function playSoftReleaseSound() {
+      try {
+        initAudio();
+        const chord = [293.66, 369.99, 440, 587.33]; // D major 9
+        chord.forEach(f => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.frequency.setValueAtTime(f, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 2.5);
+
+          osc.connect(gain);
+          gain.connect(masterGain);
+
+          osc.start();
+          osc.stop(audioCtx.currentTime + 2.6);
+        });
+      } catch(e) {}
+    }
+
+    // ==========================================
+    // 10. TOAST NOTIFICATION
+    // ==========================================
+    let toastTimeout;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const text = document.getElementById('toast-msg');
+      text.textContent = msg;
+      toast.classList.remove('hidden');
+
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3200);
+    }
+  </script>
+</body>
+</html>
